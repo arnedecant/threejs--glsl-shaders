@@ -101,27 +101,10 @@ export default class Engine {
 
 	createCamera() {
 
-		// set values to init the camera
-
-		this.aspectRatio = this.width / this.height
-		this.fieldOfView = 45
-		this.nearPlane = 1
-		this.farPlane = 2000
-
 		// create a new camera
 
-		this.camera = new THREE.PerspectiveCamera(
-			this.fieldOfView,
-			this.aspectRatio,
-			this.nearPlane,
-			this.farPlane
-		)
-
-		this.camera.position.set(240, 240, 240)
-
-		// point the camera to the center
-
-		this.camera.lookAt(this.scene.position)
+		this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10)
+		this.camera.position.z = 1
 
 	}
 
@@ -218,15 +201,30 @@ export default class Engine {
 
 	resize(e) {
 
+		// set camera
+
+		// let width, height
+
+		// this.aspectRatio = this.width / this.height
+
+		// if (this.aspectRatio >= 1) {
+		// 	width = 1
+		// 	height = this.aspectRatio
+		// } else {
+		// 	width = this.aspectRatio
+		// 	height = 1
+		// }
+		
+		// this.camera.left = -width
+		// this.camera.right = width
+		// this.camera.top = height
+		// this.camera.bottom = -height
+
+		this.camera.updateProjectionMatrix()
+
 		// set canvas dimensions
 
 		this.setSize()
-
-		// set camera
-
-		this.aspectRatio = this.width / this.height
-		this.camera.aspect = this.aspectRatio
-		this.camera.updateProjectionMatrix()
 
 		// render
 
@@ -236,6 +234,13 @@ export default class Engine {
 
 	add(mesh) { this.scene.add(mesh) }
 	remove(mesh) { this.scene.remove(mesh) }
+	clear() {
+
+		while (this.scene.children.length > 1) {
+			this.scene.remove(this.scene.children[0])
+		}
+
+	}
 
 	render(dt) {
 

@@ -218,6 +218,7 @@ gulp.task('watch', gulp.series('build', () => {
 	gulp.watch('src/sass/**', gulp.parallel('sass'))
 	gulp.watch('src/js/**', gulp.parallel('scripts'))
 	gulp.watch('src/html/**', gulp.parallel('html'))
+	gulp.watch('src/shaders/**', gulp.parallel('html'))
 	gulp.watch('src/assets/data.json', gulp.parallel('copy'))
 	//gulp.watch('src/js/vendor/**', gulp.parallel('copy'))
 	//gulp.watch('src/img/**', gulp.parallel('images'))
