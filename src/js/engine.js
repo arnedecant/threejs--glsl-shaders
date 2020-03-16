@@ -65,10 +65,6 @@ export default class Engine {
 
 		this.scene.fog = new THREE.Fog(0x605050, 500, 1500)
 
-		// create the renderer
-
-		this.createRenderer()
-
 		// create the camera
 
 		this.createCamera()
@@ -76,6 +72,10 @@ export default class Engine {
 		// add lights
 
 		this.createLights()
+
+		// create the renderer
+
+		this.createRenderer()
 
 		// add debug helpers
 
@@ -119,7 +119,7 @@ export default class Engine {
 
 		// set the size
 
-		this.setSize()
+		this.resize()
 
 		// enable shadowMap
 
@@ -201,30 +201,30 @@ export default class Engine {
 
 	resize(e) {
 
-		// set camera
-
-		// let width, height
-
-		// this.aspectRatio = this.width / this.height
-
-		// if (this.aspectRatio >= 1) {
-		// 	width = 1
-		// 	height = this.aspectRatio
-		// } else {
-		// 	width = this.aspectRatio
-		// 	height = 1
-		// }
-		
-		// this.camera.left = -width
-		// this.camera.right = width
-		// this.camera.top = height
-		// this.camera.bottom = -height
-
-		this.camera.updateProjectionMatrix()
-
 		// set canvas dimensions
 
 		this.setSize()
+
+		// set camera
+
+		let width, height
+
+		this.aspectRatio = this.width / this.height
+
+		if (this.aspectRatio >= 1) {
+			width = 1
+			height = this.height / this.width
+		} else {
+			width = this.aspectRatio
+			height = 1
+		}
+		
+		this.camera.left = -width
+		this.camera.right = width
+		this.camera.top = height
+		this.camera.bottom = -height
+
+		this.camera.updateProjectionMatrix()
 
 		// render
 
