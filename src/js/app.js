@@ -20,6 +20,9 @@ class App {
 
 		// elements
 
+		this.$interface = document.querySelector('.interface')
+		this.$index = this.$interface.querySelector('input[name="index"]')
+
 		// properties
 
 		// events
@@ -27,7 +30,8 @@ class App {
 		window.addEventListener('resize', this.resize.bind(this), false)
 		window.addEventListener('mousemove', this.mousemove.bind(this))
 		window.addEventListener('touchmove', this.mousemove.bind(this))
-		// document.body.addEventListener('click', this.click.bind(this))
+		document.body.addEventListener('click', this.click.bind(this))
+		document.body.addEventListener('submit', this.submit.bind(this))
 
 		// init
 
@@ -45,8 +49,8 @@ class App {
 
 		this.clock = new THREE.Clock()
 
-		const url = new URL(window.location.href)
-		const index = url.searchParams.get('index') || 0
+		this.url = new URL(window.location.href)
+		const index = this.url.searchParams.get('index') || 0
 
 		this.uniforms = {
 			u_time: { value: 0.0 },
@@ -55,7 +59,8 @@ class App {
 			u_color: { value: new THREE.Color(0xAA00FF) } 
 		}
 
-		this.index = parseInt(index)
+		this.index = parseInt(index) || 0
+		this.$index.value = this.index
 		
 		this.resize()
 		this.init()
@@ -103,6 +108,50 @@ class App {
 	}
 
 	click(e) {
+
+		const name = e.target.getAttribute('name')
+		const tempIndex = this.index
+
+		switch (name) {
+			case 'left': this.index--
+				break
+			case 'right': this.index++
+				break
+			default: return
+		}
+
+		const reload = this.reload()
+		if (!reload) this.index = tempIndex
+
+	}
+
+	submit(e) {
+
+		e.preventDefault()
+
+		const tempIndex = this.index
+		this.index = parseInt(this.$index.value)
+
+		const reload = this.reload()
+		if (!reload) this.index = tempIndex
+
+	}
+
+	reload() {
+
+		let reload = true
+
+		if (!SHADERS.vertex[this.index]) reload = false
+		if (!SHADERS.fragment[this.index]) reload = false
+
+		if (reload) {
+			this.url.searchParams.set('index', this.index)
+			window.location.href = this.url
+			return true
+		} else {
+			alert('Index unreachable')
+			return false
+		}
 
 	}
 

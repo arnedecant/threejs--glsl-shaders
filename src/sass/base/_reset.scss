@@ -11,6 +11,21 @@ ul, li {
 	list-style-type: none;
 }
 
+button, a {
+	all: unset;
+	pointer-events: all;
+	cursor: pointer;
+}
+
+button *, a * {
+	pointer-events: none;
+}
+
+input, textarea {
+	all: unset;
+	pointer-events: all;
+}
+
 *, *:before, *:after {
 	box-sizing: border-box;
 }
