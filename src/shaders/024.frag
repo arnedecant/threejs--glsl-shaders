@@ -3,7 +3,7 @@
 
 uniform vec2 u_mouse;
 uniform vec2 u_resolution;
-uniform sampler2D u_tex;
+uniform sampler2D u_tex_fire;
 uniform float u_time;
 
 varying vec2 v_uv;
@@ -17,18 +17,18 @@ void main (void)
 
 	if (v_uv.x < 0.5){
 		if (v_uv.y < 0.5){
-			col = texture2D(u_tex, v_uv * 2.0);
+			col = texture2D(u_tex_fire, v_uv * 2.0);
 			color = vec3(col.b);
 		}else{
-			col = texture2D(u_tex, v_uv * 2.0-vec2(0.0, 1.0));
+			col = texture2D(u_tex_fire, v_uv * 2.0-vec2(0.0, 1.0));
 			color = vec3(col.r);
 		}
 	}else{
 		if (v_uv.y<0.5){
-			col = texture2D(u_tex, v_uv*2.0-vec2(1.0, 0.0));
+			col = texture2D(u_tex_fire, v_uv*2.0-vec2(1.0, 0.0));
 			color = vec3(col.a);
 		}else{
-			col = texture2D(u_tex, v_uv*2.0-vec2(1.0, 1.0));
+			col = texture2D(u_tex_fire, v_uv*2.0-vec2(1.0, 1.0));
 			color = vec3(col.g);
 		}
 	}

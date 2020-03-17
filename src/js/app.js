@@ -61,7 +61,13 @@ class App {
 			u_color_brick_b: { value: new THREE.Color(0x00ffff) },
 			u_color_fire_a: { value: new THREE.Color(0xff0000) },
 			u_color_fire_b: { value: new THREE.Color(0xffff00) },
-			u_tex: { value: new THREE.TextureLoader().load("https://s3-us-west-2.amazonaws.com/s.cdpn.io/2666677/flame.png") },
+			u_tex_fire: { value: ENGINE.load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/2666677/flame.png') },
+			u_color_wood_a: { value: new THREE.Color(0x7d490b) },
+			u_color_wood_b: { value: new THREE.Color(0xbb905d) },
+			u_wood_frequency: { value: 2.0 },
+			u_wood_noise_scale: { value: 6.0 },
+			u_wood_ring_scale: { value: 0.6 },
+			u_wood_contrast: { value: 4.0 }
 		}
 
 		this.fill = this.url.searchParams.get('fill') || 0
@@ -165,7 +171,7 @@ class App {
 
 		if (window.STOP) return
 		
-		this.uniforms.u_time.value = this.clock.getElapsedTime()
+		this.uniforms.u_time.value += this.clock.getDelta()
 
 		window.requestAnimationFrame(this.render.bind(this))
 

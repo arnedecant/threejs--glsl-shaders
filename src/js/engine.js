@@ -33,7 +33,8 @@ export default class Engine {
 
 		// setup loader
 
-		this.loader = new THREE.FBXLoader()
+		// this.loader = new THREE.FBXLoader()
+		this.loader = new THREE.TextureLoader()
 		// this.preloader = new Preloader()
 
 		// add events
@@ -104,7 +105,7 @@ export default class Engine {
 		// create a new camera
 
 		this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10)
-		this.camera.position.z = 1
+		this.camera.position.z = 2;
 
 	}
 
@@ -244,6 +245,11 @@ export default class Engine {
 		while (this.scene.children.length > 1) {
 			this.scene.remove(this.scene.children[0])
 		}
+
+	}
+	load(path) {
+
+		return this.loader.load(path)
 
 	}
 
