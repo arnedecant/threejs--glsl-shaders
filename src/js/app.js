@@ -56,9 +56,15 @@ class App {
 			u_time: { value: 0.0 },
 			u_mouse: { value: { x: 0.0, y: 0.0 } },
 			u_resolution: { value: { x: 0.0, y: 0.0 } },
-			u_color: { value: new THREE.Color(0xAA00FF) } 
+			u_color: { value: new THREE.Color(0xAA00FF) },
+			u_color_brick_a: { value: new THREE.Color(0xff0000) },
+			u_color_brick_b: { value: new THREE.Color(0x00ffff) },
+			u_color_fire_a: { value: new THREE.Color(0xff0000) },
+			u_color_fire_b: { value: new THREE.Color(0xffff00) },
+			u_tex: { value: new THREE.TextureLoader().load("https://s3-us-west-2.amazonaws.com/s.cdpn.io/2666677/flame.png") },
 		}
 
+		this.fill = this.url.searchParams.get('fill') || 0
 		this.index = parseInt(index) || 0
 		this.$index.value = this.index
 		
@@ -89,7 +95,7 @@ class App {
 
 	resize(e) {
 
-		ENGINE.resize()
+		ENGINE.resize(this.fill)
 		
 		if (!this.uniforms.u_resolution) return
 

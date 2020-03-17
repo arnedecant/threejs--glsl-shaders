@@ -1,88 +1,112 @@
-#define PI 3.14159265359
-#define PI2 6.28318530718
+#define PI 3.1415926538
 
+uniform float u_time;
 uniform vec2 u_mouse;
 uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec3 u_color;
 
 varying vec2 v_uv;
 varying vec3 v_position;
 
-float circle(vec2 pt, vec2 center, float radius, float line_width, float edge_thickness) {
+mat2 getRotationMatrix(float theta) {
 
-	pt -= center;
+    float s = sin(theta);
+    float c = cos(theta);
 
-	float len = length(pt);
-	float result = smoothstep(radius-line_width/2.0-edge_thickness, radius-line_width/2.0, len) - smoothstep(radius + line_width/2.0, radius + line_width/2.0 + edge_thickness, len);
-
-	return result;
+    return mat2(c, -s, s, c);
 
 }
 
-float line(float x, float y, float line_width, float edge_thickness) {
+mat2 getScaleMatrix(float scale) {
 
-	return smoothstep(x-line_width/2.0-edge_thickness, x-line_width/2.0, y) - smoothstep(x+line_width/2.0, x+line_width/2.0+edge_thickness, y);
-
-}
-
-float sweep(vec2 pt, vec2 center, float radius, float line_width, float edge_thickness){
-	
-	vec2 d = pt - center;
-	float theta = u_time * 2.0;
-	vec2 p = vec2(cos(theta), -sin(theta)) * radius;
-	float h = dot(d, p) / dot(p, p);
-	h = clamp(h, 0.0, 1.0);
-	float l = length(d - p * h);
-
-	float gradient = 0.0;
-	const float gradient_angle = PI * 1.5;
-
-	if (length(d) < radius) {
-
-		float angle = mod(theta + atan(d.y, d.x), PI2);
-		gradient = clamp(gradient_angle - angle, 0.0, gradient_angle) / gradient_angle * 0.5;
-	
-	}
-
-	return gradient + 1.0 - smoothstep(line_width, line_width + edge_thickness, l);
+    return mat2(scale, 0, 0, scale);
 
 }
 
-float polygon(vec2 pt, vec2 center, float radius, int sides, float rotate, float edge_thickness){
-	
-	pt -= center;
+// returns 1.0 when a point (pt) is inside a rectangle defined by size and center
 
-	// Angle and radius from the current pixel
-	float theta = atan(pt.y, pt.x) + rotate;
-	float rad = PI2/float(sides);
+float rect(vec2 pt, vec2 anchor, vec2 size, vec2 center) {
 
-	// Shaping function that modulate the distance
-	float d = cos(floor(0.5 + theta/rad)*rad-theta)*length(pt);
+    vec2 p = pt - center;
+    vec2 halfSize = size * 0.5;
 
-	return 1.0 - smoothstep(radius, radius + edge_thickness, d);
+    float horz = step(-halfSize.x - anchor.x, p.x) - step(halfSize.x - anchor.x, p.x);
+    float vert = step(-halfSize.y - anchor.y, p.y) - step(halfSize.y - anchor.y, p.y);
+
+    return horz * vert;
+
+}
+
+float circle(vec2 pt, vec2 center, float radius) {
+    
+    vec2 p = pt - center;
+
+    return 1.0 - step(radius, length(p));
 
 }
 
-void main (void) {
+float circle(vec2 pt, vec2 center, float radius, bool soften) {
+    
+    vec2 p = pt - center;
+    float edge = (soften) ? radius * 0.05 : 0.0;
 
-	const float line_width = 0.002;
-	const float edge_thickness = 0.001;
-
-	vec3 axis_color = vec3(0.8);
-	vec3 color = vec3(0.0);
-
-	// axis x & y
-	color += line(v_uv.x, 0.5, line_width, edge_thickness) * axis_color;
-	color += line(v_uv.y, 0.5, line_width, edge_thickness) * axis_color;
-	
-	// circles
-	color += circle(v_uv, vec2(0.5), 0.3, line_width, edge_thickness) * axis_color;
-	color += circle(v_uv, vec2(0.5), 0.2, line_width, edge_thickness) * axis_color;
-	color += circle(v_uv, vec2(0.5), 0.1, line_width, edge_thickness) * axis_color;
-
-	// sweep
-	color += sweep(v_uv, vec2(0.5), 0.3, 0.003, edge_thickness) * vec3(0.1, 0.3, 1.0); 
-
-	gl_FragColor = vec4(color, 1.0); 
+    return 1.0 - smoothstep(radius - edge, radius + edge, length(p));
 
 }
+
+float circle(vec2 pt, vec2 center, float radius, float line_width) {
+    
+    vec2 p = pt - center;
+    float len = length(p);
+    float half_line_width = line_width / 2.0;
+
+    return step(radius - half_line_width, len) - step(radius + half_line_width, len);
+
+}
+
+float circle(vec2 pt, vec2 center, float radius, float line_width, bool soften) {
+    
+    vec2 p = pt - center;
+    
+    float len = length(p);
+    float half_line_width = line_width / 2.0;
+    float edge = (soften) ? radius * half_line_width : 0.0;
+
+    float inner = radius - half_line_width;
+    float outer = radius + half_line_width;
+
+    return smoothstep(inner - edge, inner + edge, len) - smoothstep(outer - edge, outer + edge, len);
+
+}
+
+float line(float a, float b, float line_width, float edge_thickness) {
+    
+    float half_line_width = line_width / 0.5;
+
+    return smoothstep(a - half_line_width - edge_thickness, a - half_line_width, b) - smoothstep(a + half_line_width, a + half_line_width + edge_thickness, b);
+
+}
+
+void main() {
+
+    float x = sin(v_uv.x * PI * 4.0);
+    x = mix(0.1, 0.9, (x + 1.0) / 2.0);
+    
+    float line = line(v_uv.y, x, 0.1, 0.006);
+    vec3 color = vec3(0.0, 1.0, 1.0) * line;
+
+    gl_FragColor = vec4(color, 1.0);
+
+}
+
+// void main() {
+
+//     float x = sin(v_position.x * PI * 2.0);
+//     x = mix(-0.8, 0.8, (x + 1.0) / 2.0);
+    
+//     float line = line(v_position.y, x, 0.005, 0.01);
+//     vec3 color = vec3(0.0, 1.0, 1.0) * line;
+
+//     gl_FragColor = vec4(color, 1.0);
+
+// }

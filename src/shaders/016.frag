@@ -1,5 +1,3 @@
-#define PI 3.1415926538
-
 uniform float u_time;
 uniform vec2 u_mouse;
 uniform vec2 u_resolution;
@@ -79,34 +77,22 @@ float circle(vec2 pt, vec2 center, float radius, float line_width, bool soften) 
 
 }
 
-float line(float a, float b, float line_width, float edge_thickness) {
-    
-    float half_line_width = line_width / 0.5;
-
-    return smoothstep(a - half_line_width - edge_thickness, a - half_line_width, b) - smoothstep(a + half_line_width, a + half_line_width + edge_thickness, b);
-
-}
-
 void main() {
 
-    float x = sin(v_uv.x * PI * 4.0);
-    x = mix(0.1, 0.9, (x + 1.0) / 2.0);
+    float circle = circle(v_position.xy, vec2(0.5), 0.3, 0.02, true);
+    vec3 color = vec3(0.0, 1.0, 1.0) * circle;
+
+    // vec2 tilecount = vec2(10.0);
+    // vec2 center = vec2(0.5);
+    // mat2 rotation = getRotationMatrix(u_time);
+
+    // vec2 p = fract(v_uv * tilecount);
     
-    float line = line(v_uv.y, x, 0.1, 0.006);
-    vec3 color = vec3(0.0, 1.0, 1.0) * line;
+    // vec2 pt = rotation * (p - center) + center;
+
+    // float square = rect(pt, vec2(0.0), vec2(0.68), center);
+    // vec3 color = vec3(0.0, 1.0, 1.0) * square;
 
     gl_FragColor = vec4(color, 1.0);
 
 }
-
-// void main() {
-
-//     float x = sin(v_position.x * PI * 2.0);
-//     x = mix(-0.8, 0.8, (x + 1.0) / 2.0);
-    
-//     float line = line(v_position.y, x, 0.005, 0.01);
-//     vec3 color = vec3(0.0, 1.0, 1.0) * line;
-
-//     gl_FragColor = vec4(color, 1.0);
-
-// }

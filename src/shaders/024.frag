@@ -1,53 +1,38 @@
-uniform float u_time;
+#define PI 3.141592653589
+#define PI2 6.28318530718
+
 uniform vec2 u_mouse;
 uniform vec2 u_resolution;
-uniform vec3 u_color;
+uniform sampler2D u_tex;
+uniform float u_time;
 
 varying vec2 v_uv;
-varying vec3 v_position;
 
-mat2 getRotationMatrix(float theta) {
+//Based on http://clockworkchilli.com/blog/8_a_fire_shader_in_glsl_for_your_webgl_games
 
-    float s = sin(theta);
-    float c = cos(theta);
+void main (void)
+{
+	vec4 col;
+	vec3 color;
 
-    return mat2(c, -s, s, c);
+	if (v_uv.x < 0.5){
+		if (v_uv.y < 0.5){
+			col = texture2D(u_tex, v_uv * 2.0);
+			color = vec3(col.b);
+		}else{
+			col = texture2D(u_tex, v_uv * 2.0-vec2(0.0, 1.0));
+			color = vec3(col.r);
+		}
+	}else{
+		if (v_uv.y<0.5){
+			col = texture2D(u_tex, v_uv*2.0-vec2(1.0, 0.0));
+			color = vec3(col.a);
+		}else{
+			col = texture2D(u_tex, v_uv*2.0-vec2(1.0, 1.0));
+			color = vec3(col.g);
+		}
+	}
 
-}
-
-mat2 getScaleMatrix(float scale) {
-
-    return mat2(scale, 0, 0, scale);
-
-}
-
-// returns 1.0 when a point (pt) is inside a rectangle defined by size and center
-
-float rect(vec2 pt, vec2 anchor, vec2 size, vec2 center) {
-
-    vec2 p = pt - center;
-    vec2 halfSize = size * 0.5;
-
-    float horz = step(-halfSize.x - anchor.x, p.x) - step(halfSize.x - anchor.x, p.x);
-    float vert = step(-halfSize.y - anchor.y, p.y) - step(halfSize.y - anchor.y, p.y);
-
-    return horz * vert;
-
-}
-
-void main() {
-
-    vec2 tilecount = vec2(10.0);
-    vec2 center = vec2(0.5);
-    mat2 rotation = getRotationMatrix(u_time);
-
-    vec2 p = fract(v_uv * tilecount);
-    
-    vec2 pt = rotation * (p - center) + center;
-
-    float square = rect(pt, vec2(0.0), vec2(0.68), center);
-    vec3 color = vec3(0.0, 1.0, 1.0) * square;
-
-    gl_FragColor = vec4(color, 1.0);
+	gl_FragColor = vec4(color, 1.0);
 
 }
