@@ -199,7 +199,7 @@ export default class Engine {
 
 	}
 
-	resize(e) {
+	resize(updateCamera = false) {
 
 		// set canvas dimensions
 
@@ -207,24 +207,29 @@ export default class Engine {
 
 		// set camera
 
-		let width, height
-
 		this.aspectRatio = this.width / this.height
 
-		if (this.aspectRatio >= 1) {
-			width = 1
-			height = this.height / this.width
-		} else {
-			width = this.aspectRatio
-			height = 1
+		if (updateCamera) {
+
+			let width, height
+
+			if (this.aspectRatio >= 1) {
+				width = 1
+				height = this.height / this.width
+			} else {
+				width = this.aspectRatio
+				height = 1
+			}
+			
+			this.camera.left = -width
+			this.camera.right = width
+			this.camera.top = height
+			this.camera.bottom = -height
+
+			this.camera.updateProjectionMatrix()
+
 		}
 		
-		this.camera.left = -width
-		this.camera.right = width
-		this.camera.top = height
-		this.camera.bottom = -height
-
-		this.camera.updateProjectionMatrix()
 
 		// render
 

@@ -29,6 +29,15 @@
 
 body {
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+    background-color: var(--color-secondary);
+}
+
+canvas {
+    border: 5px solid var(--color-default);
+    width: 80vh !important;
+    height: 80vh !important;
+    margin: 3vh auto;
+    display: block;
 }
 
 .interface {
@@ -60,4 +69,19 @@ body {
     margin: 0 1rem;
     width: 5rem;
     text-align: center;
+}
+
+canvas {
+    border: 5px solid var(--color-default);
+    width: 80vh !important;
+    height: 80vh !important;
+    margin: 3vh auto;
+    display: block;
+}
+
+@media (max-aspect-ratio: 1/1) {
+    canvas {
+        width: 80vw !important;
+        height: 80vw !important;
+    }
 }
