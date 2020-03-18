@@ -25,19 +25,19 @@ void main (void) {
 
     // Generate noisy y value
     uv = vec2(v_uv.x * 0.7 - 0.01, fract(v_uv.y - time * 0.27));
-    noise.y = (texture2D(u_tex_fire, uv).w - 0.5) * 2.0;
+    noise.y = (texture2D(u_tex_fire, uv).w - 0.5) * 10.0;
     uv = vec2(v_uv.x * 0.45 + 0.033, fract(v_uv.y * 1.9 - time * 0.61));
-    noise.y = (texture2D(u_tex_fire, uv).w - 0.5) * 2.0;
+    noise.y = (texture2D(u_tex_fire, uv).w - 0.5) * 10.0;
     uv = vec2(v_uv.x * 0.8 - 0.02, fract(v_uv.y * 2.5 - time * 0.51));
-    noise.y += (texture2D(u_tex_fire, uv).w - 0.5) * 2.0;
+    noise.y += (texture2D(u_tex_fire, uv).w - 0.5) * 3.0;
 
-    noise = clamp(noise, -1.0, 1.0);
+    noise = clamp(noise, -2.0, 2.0);
 
     float perturb = (1.0 - v_uv.y) * 0.35 + 0.02;
     noise = (noise * perturb) + v_uv - 0.02;
 
     vec4 color = texture2D(u_tex_fire, noise);
-    color = vec4(color.r * 2.0, color.g * 0.9, (color.g / color.r) * 0.2, 1.0);
+    color = vec4((color.g / color.r) * 0.2, color.g * 0.8, color.r * 2.5, 1.0);
     noise = clamp(noise, 0.05, 1.0);
 
     // NOTE: why doesn't this get cropped according to the alpha channel?

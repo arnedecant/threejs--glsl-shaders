@@ -1,36 +1,22 @@
 #include <noise>
 
-uniform float u_time;
+uniform vec3 u_color_wood_a;
+uniform vec3 u_color_wood_b;
+uniform float u_wood_frequency;
+uniform float u_wood_noise_scale;
+uniform float u_wood_ring_scale;
+uniform float u_wood_contrast;
 
 varying vec3 v_position;
 
 void main() {
 
-    vec2 p = v_position.xy;
-    float time = (sin(u_time) + 1.0) / 2.0;
-    float scale = 650.0; // 800.0
-    vec3 color;
-    bool marble = true;
+    float n = snoise(v_position); 
+    float ring = fract(u_wood_noise_scale * n);
+    ring *= u_wood_contrast * (1.0 - ring);
 
-    p *= scale;
-
-    if (marble) {
-
-        float d = perlin(p.x, p.y) * scale; 
-        float u = p.x + d;
-        float v = p.y + d;
-        
-        d = perlin(u, v) * scale;
-        float noise = perlin(p.x + d, p.y + d);
-
-        // color = vec3(0.6 * (vec3(2.0 * noise) - vec3(noise * 0.1, noise * 0.2 - sin(u / 30.0) * 0.1, noise * 0.3 + sin(v / 40.0) * 0.2)));
-        color = vec3(0.1 * (vec3(15.0 * noise) - vec3(noise * 0.9, noise * 0.9 - sin(u / 30.0) * 0.01, noise * 0.8 + sin(v / 40.0) * 0.9)));
-    
-    } else {
-
-        color = vec3(perlin(p.x, p.y));
-    
-    }
+    float lerp = pow(ring, u_wood_ring_scale) + n;
+    vec3 color = mix(u_color_wood_a, u_color_wood_b, lerp);
 
     gl_FragColor = vec4(color, 1.0);
 
