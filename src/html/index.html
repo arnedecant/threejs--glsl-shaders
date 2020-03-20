@@ -125,10 +125,18 @@
 <body>
 
 	<form class="interface">
-		<button class="btn" name="left" title="Previous" type="button"><i class="fas fa-arrow-left"></i></button>
-		<input type="number" placeholder="Press enter" name="index" title="index">
-		<button class="btn" name="right" title="Next" type="button"><i class="fas fa-arrow-right"></i></button>
+		<section>
+			<button type="button" class="btn" name="left" title="Previous"><i class="fas fa-arrow-left"></i></button>
+			<input type="number" placeholder="Press enter" name="index" title="index">
+			<button type="button" class="btn" name="right" title="Next"><i class="fas fa-arrow-right"></i></button>
+		</section>
+		<section>
+			<input type="checkbox" name="fill" title="Fill screen" id="fill"><label for="fill">Fill screen with shader</label>
+		</section>
 	</form>
+
+	<button class="carousel__prev"><i class="fas fa-arrow-left"></button>
+	<button class="carousel__next"><i class="fas fa-arrow-right"></button>
 
 	@@include('./icons/icons.html')
 	@@include('./shaders/index.html')

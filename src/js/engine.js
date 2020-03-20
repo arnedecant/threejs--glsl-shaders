@@ -247,9 +247,9 @@ export default class Engine {
 		}
 
 	}
-	load(path) {
+	load(path, fn) {
 
-		return this.loader.load(path)
+		return this.loader.load(path, fn)
 
 	}
 

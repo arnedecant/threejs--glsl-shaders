@@ -32,26 +32,28 @@ body {
     background-color: var(--color-secondary);
 }
 
-canvas {
-    border: 5px solid var(--color-default);
-    width: 80vh !important;
-    height: 80vh !important;
-    margin: 3vh auto;
-    display: block;
-}
-
 .interface {
     position: fixed;
     left: 50%;
     bottom: 2rem;
     transform: translate(-50%, 0);
+}
 
+.interface section {
     display: flex;
+    align-items: center;
+    padding: 0.5rem;
+}
+
+.interface section:first-child {
     background-color: var(--color-default);
     box-shadow: 0 0 5px 1px rgba(var(--rgb-secondary), 0.5);
-
-    padding: 1rem;
+    padding: 0.5rem;
     border-radius: 2rem;
+}
+
+.interface section {
+    justify-content: center;
 }
 
 .interface .btn {
@@ -59,19 +61,41 @@ canvas {
     align-items: center;
     justify-content: center;
 
+    flex: 0 0 2rem;
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
     border: 1px solid var(--color-secondary);
 }
 
-.interface input {
+.interface input:not([type="checkbox"]) {
     margin: 0 1rem;
     width: 5rem;
     text-align: center;
 }
 
-canvas {
+.interface input[type="checkbox"] {
+    flex: 0 0 0.6rem;
+    width: 0.6rem;
+    height: 0.6rem;
+    margin-right: 0.5rem;
+    border-radius: 0.2rem;
+    border: 1px solid rgba(var(--rgb-default), 0.8);
+    box-shadow: 0 0 1px 1px rgba(var(--rgb-secondary), 0.8);
+    background-color: rgba(var(--rgb-default), 0.0);
+}
+
+.interface input[type="checkbox"]:checked {
+    background-color: rgba(var(--rgb-primary), 0.8);
+}
+
+.interface label {
+    font-size: 0.8rem;
+    color: rgba(var(--rgb-default), 0.8);
+    text-shadow: 1px 1px 1px rgba(var(--rgb-secondary), 0.8);
+}
+
+body:not(.fill) canvas {
     border: 5px solid var(--color-default);
     width: 80vh !important;
     height: 80vh !important;
@@ -80,8 +104,60 @@ canvas {
 }
 
 @media (max-aspect-ratio: 1/1) {
-    canvas {
+    body:not(.fill) canvas {
         width: 80vw !important;
         height: 80vw !important;
     }
+}
+
+
+
+// -------------------------------------------------------------------
+// :: CAROUSEL
+// -------------------------------------------------------------------
+
+.carousel__next,
+.carousel__prev {
+    position: fixed;
+    left: 2rem;
+    top: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    width: 4rem;
+    height: 4rem;
+
+    color: var(--color-primary);
+    border: 3px solid var(--color-primary);
+    font-size: 2rem;
+
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(0, -50%);
+
+    transition: .2s ease;
+    transition-property: background-color, color, opacity, transform;
+}
+
+.carousel__prev.show,
+.carousel__next.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.carousel__next:hover,
+.carousel__prev:hover {
+    background-color: var(--color-primary);
+    color: var(--color-secondary);
+}
+
+.carousel__next:active,
+.carousel__prev:active {
+    transform: translate(0, -50%) scale(0.9);
+}
+
+.carousel__next {
+    left: auto;
+    right: 2rem;
 }
