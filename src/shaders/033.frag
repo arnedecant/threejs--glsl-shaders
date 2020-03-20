@@ -4,7 +4,7 @@
 varying vec2 v_uv;
 varying vec3 v_position;
 
-uniform sampler2D u_tex_rhino;
+uniform sampler2D u_tex;
 uniform float u_time;
 uniform float u_ripple_duration;
 
@@ -20,7 +20,7 @@ void main() {
     // float pct = abs(sin(u_time));
     // vec2 uv = mix(ripple, v_uv, pct);
     
-    vec3 color = texture2D(u_tex_rhino, uv).rgb;
+    vec3 color = texture2D(u_tex, uv).rgb;
 
     gl_FragColor = vec4(color, 1.0); 
 

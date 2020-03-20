@@ -126,17 +126,17 @@
 
 	<form class="interface">
 		<section>
-			<button type="button" class="btn" name="left" title="Previous"><i class="fas fa-arrow-left"></i></button>
+			<button type="button" class="btn" name="prev" title="Previous"><i class="fas fa-arrow-left"></i></button>
 			<input type="number" placeholder="Press enter" name="index" title="index">
-			<button type="button" class="btn" name="right" title="Next"><i class="fas fa-arrow-right"></i></button>
+			<button type="button" class="btn" name="next" title="Next"><i class="fas fa-arrow-right"></i></button>
 		</section>
 		<section>
 			<input type="checkbox" name="fill" title="Fill screen" id="fill"><label for="fill">Fill screen with shader</label>
 		</section>
 	</form>
 
-	<button class="carousel__prev"><i class="fas fa-arrow-left"></button>
-	<button class="carousel__next"><i class="fas fa-arrow-right"></button>
+	<button class="carousel__prev" name="carousel-prev"><i class="fas fa-arrow-left"></button>
+	<button class="carousel__next" name="carousel-next"><i class="fas fa-arrow-right"></button>
 
 	@@include('./icons/icons.html')
 	@@include('./shaders/index.html')

@@ -26,6 +26,8 @@ class App {
 
 		// properties
 
+		this.images = []
+
 		// events
 
 		window.addEventListener('resize', this.resize.bind(this), false)
@@ -42,7 +44,29 @@ class App {
 		vertexShaders.forEach((s) => SHADERS.vertex.push(s.textContent))
 		fragmentShaders.forEach((s) => SHADERS.fragment.push(s.textContent))
 
-		this.setup()
+		this.preload()
+
+	}
+
+	preload() {
+
+		const amount = 5
+		let loaded = 0
+
+		ENGINE.loader.setPath('https://s3-us-west-2.amazonaws.com/s.cdpn.io/2666677/')
+
+		for (let i = 1; i <= amount; i++) {
+
+			ENGINE.load(`sa${ i }.jpg`, (tex) => {
+
+				this.images.push(tex)
+				loaded++
+
+				if (loaded == amount) this.setup()
+
+			})
+
+		}
 
 	}
 
@@ -53,12 +77,22 @@ class App {
 		this.url = new URL(window.location.href)
 		const index = this.url.searchParams.get('index') || 0
 		const fill = this.url.searchParams.get('fill') || 0
+		const image = this.url.searchParams.get('image') || 0
 
 		this.fill = parseInt(fill) || 0
 		this.index = parseInt(index) || 0
+		this.image = parseInt(image) || 0
 		this.$index.value = this.index
 
-		ENGINE.loader.setPath('https://s3-us-west-2.amazonaws.com/s.cdpn.io/2666677/')
+		if (this.image && this.images.length <= 0) {
+			alert(`Something went wrong loading the images`)
+			return
+		}
+
+		if (this.image > this.images.length - 1) {
+			alert(`No such image. Maximum image id: ${ this.images.length - 1 }`)
+			return
+		}
 
 		this.uniforms = {
 			u_time: { value: 0.0 },
@@ -70,7 +104,7 @@ class App {
 			u_color_fire_a: { value: new THREE.Color(0xff0000) },
 			u_color_fire_b: { value: new THREE.Color(0xffff00) },
 			u_tex_fire: { value: ENGINE.load('flame.png') },
-			u_tex_rhino: { value: ENGINE.load('sa1.jpg') },
+			u_tex: { value: this.images[this.image] },
 			u_tex_carousel_1: { value: null },
 			u_tex_carousel_2: { value: null },
 			u_color_wood_a: { value: new THREE.Color(0x7d490b) },
@@ -79,7 +113,7 @@ class App {
 			u_wood_noise_scale: { value: 6.0 },
 			u_wood_ring_scale: { value: 0.6 },
 			u_wood_contrast: { value: 4.0 },
-			u_ripple_duration: { value: 8.0 }
+			u_ripple_duration: { value: 2.0 }
 		}
 		
 		this.resize()
@@ -115,24 +149,58 @@ class App {
 
 	initCarousel() {
 
-		const carousels = [33, 34]
+		const carousels = [35, 36]
 
 		if (!carousels.includes(this.index)) return
 
 		this.carousel = {
+			index: 0,
 			images: [],
 			$next: document.querySelector('.carousel__next'),
 			$prev: document.querySelector('.carousel__prev'),
 		}
 
-		for (let i = 1; i <= 5; i++) {
-			ENGINE.load(`sa${ i }.jpg`, (tex) => this.carousel.images.push(tex))
-		}
+		this.images.forEach((img, i) => this.carousel.images.push(img))
+
+		this.uniforms.u_tex_carousel_1.value = this.carousel.images[0]
+		this.uniforms.u_tex_carousel_2.value = this.carousel.images[0]
 
 		setTimeout(() => {
 			this.carousel.$next.classList.add('show')
 			this.carousel.$prev.classList.add('show')
 		}, 500)
+
+	}
+
+	carouselIndexChange(direction) {
+
+		let index = this.getCarouselIndex(this.carousel.index)
+		let prev = this.getCarouselIndex(index - 1)
+		let next = this.getCarouselIndex(index + 1)
+
+		this.uniforms.u_tex_carousel_1.value = this.carousel.images[index]
+
+		if (direction == 'prev') {
+			this.uniforms.u_tex_carousel_2.value = this.carousel.images[prev]
+			this.carousel.index = prev
+		} else if (direction == 'next') {
+			this.uniforms.u_tex_carousel_2.value = this.carousel.images[next]
+			this.carousel.index = next
+		}
+
+		this.uniforms.u_time.value = 0
+
+	}
+
+	getCarouselIndex(index) {
+
+		const min = 0
+		const max = this.carousel.images.length - 1
+
+		if (index > max) index = min
+		if (index < min) index = max
+
+		return index
 
 	}
 
@@ -162,7 +230,7 @@ class App {
 
 	mousemove(e) {
 
-		if (!this.uniforms.u_mouse) return
+		if (!this.uniforms || this.uniforms.u_mouse) return
 
 		this.uniforms.u_mouse.value.x = (e.touches) ? e.touches[0].clientX : e.clientX
 		this.uniforms.u_mouse.value.y = (e.touches) ? e.touches[1].clientY : e.clientY
@@ -184,11 +252,21 @@ class App {
 		// handle logic
 
 		switch (name) {
-			case 'left': this.index--
+			case 'prev': this.index--
 				break
-			case 'right': this.index++
+			case 'next': this.index++
 				break
 			case 'fill': this.fill = this.$fill.checked ? 1 : 0
+				break
+			case 'carousel-prev':
+				// this.carousel.index--
+				this.carouselIndexChange('prev')
+				return
+				break
+			case 'carousel-next':
+				// this.carousel.index++
+				this.carouselIndexChange('next')
+				return
 				break
 			default: return
 		}
@@ -240,8 +318,22 @@ class App {
 	render(timestamp) {
 
 		if (window.STOP) return
-		
-		this.uniforms.u_time.value += this.clock.getDelta()
+
+		const delta = this.clock.getDelta();
+
+		if (this.carousel) {
+			
+			if (this.uniforms.u_time.value < this.uniforms.u_ripple_duration.value) {
+				this.uniforms.u_time.value += delta
+			} else {
+				this.uniforms.u_time.value = this.uniforms.u_ripple_duration.value;
+			}
+
+		} else {
+
+			this.uniforms.u_time.value += delta
+
+		}
 
 		window.requestAnimationFrame(this.render.bind(this))
 
