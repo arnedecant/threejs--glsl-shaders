@@ -14,6 +14,8 @@ void main (void) {
     vec2 p = -1.0 + 2.0 * v_uv;
     float len = length(p);
     float time = (sin(u_time) + 1.0) * 5.0;
+    // float time = (sin(u_time) + 1.5) * 7.0;
+    // float time = (sin(u_time) + 10.0);
 
     vec2 ripple = v_uv + (p / len) * cos(len * 12.0 - time * 4.0) * 0.03;
     float delta = time / u_ripple_duration;

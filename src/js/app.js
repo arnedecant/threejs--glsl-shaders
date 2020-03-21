@@ -53,11 +53,11 @@ class App {
 		const amount = 5
 		let loaded = 0
 
-		ENGINE.loader.setPath('https://s3-us-west-2.amazonaws.com/s.cdpn.io/2666677/')
+		ENGINE.loader.setPath('assets/')
 
 		for (let i = 1; i <= amount; i++) {
 
-			ENGINE.load(`sa${ i }.jpg`, (tex) => {
+			ENGINE.load(`tex${ i }.jpg`, (tex) => {
 
 				this.images.push(tex)
 				loaded++
@@ -105,6 +105,8 @@ class App {
 			u_color_fire_b: { value: new THREE.Color(0xffff00) },
 			u_tex_fire: { value: ENGINE.load('flame.png') },
 			u_tex: { value: this.images[this.image] },
+			u_tex_1: { value: this.images[0] },
+			u_tex_2: { value: this.images[1] },
 			u_tex_carousel_1: { value: null },
 			u_tex_carousel_2: { value: null },
 			u_color_wood_a: { value: new THREE.Color(0x7d490b) },
